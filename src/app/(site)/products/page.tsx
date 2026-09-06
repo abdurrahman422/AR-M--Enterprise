@@ -10,8 +10,9 @@ import { data } from "@/lib/data";
 import { createMetadata } from "@/lib/seo";
 import type { ProductAvailability } from "@/types/content";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
+
+const PRODUCTS_PER_PAGE = 48;
 
 export const metadata = createMetadata({
   title: "Products",
@@ -26,12 +27,14 @@ function isAvailability(value?: string): value is ProductAvailability {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; availability?: string; featured?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; availability?: string; featured?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const availability = isAvailability(params.availability) ? params.availability : undefined;
   const featuredOnly = params.featured === "1";
   const hasFilters = Boolean(params.q || params.category || availability || featuredOnly);
+  const requestedPage = Number.parseInt(params.page || "1", 10);
+  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
   const [categories, products, featured] = await Promise.all([
     data.categories.list(),
@@ -50,6 +53,22 @@ export default async function ProductsPage({
   const catalogProducts = hasFilters
     ? products
     : products.filter((product) => !featuredIds.has(product.id));
+  const pageCount = Math.max(1, Math.ceil(catalogProducts.length / PRODUCTS_PER_PAGE));
+  const currentPage = Math.min(page, pageCount);
+  const visibleProducts = catalogProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE,
+  );
+  const pageHref = (nextPage: number) => {
+    const query = new URLSearchParams();
+    if (params.q) query.set("q", params.q);
+    if (params.category) query.set("category", params.category);
+    if (availability) query.set("availability", availability);
+    if (featuredOnly) query.set("featured", "1");
+    if (nextPage > 1) query.set("page", String(nextPage));
+    const value = query.toString();
+    return value ? `/products?${value}` : "/products";
+  };
 
   return (
     <>
@@ -110,7 +129,18 @@ export default async function ProductsPage({
                 </h2>
                 <p className="font-mono text-xs text-muted">{catalogProducts.length} listed</p>
               </div>
-              <ProductGrid products={catalogProducts} categories={categories} />
+              <ProductGrid products={visibleProducts} categories={categories} />
+              {pageCount > 1 ? (
+                <nav className="mt-12 flex items-center justify-between gap-4 border-t border-border pt-6" aria-label="Product pages">
+                  <Button href={pageHref(currentPage - 1)} variant="outline" size="sm" className={currentPage === 1 ? "pointer-events-none opacity-40" : undefined}>
+                    ← Previous
+                  </Button>
+                  <p className="font-mono text-xs text-muted">Page {currentPage} of {pageCount}</p>
+                  <Button href={pageHref(currentPage + 1)} variant="outline" size="sm" className={currentPage === pageCount ? "pointer-events-none opacity-40" : undefined}>
+                    Next →
+                  </Button>
+                </nav>
+              ) : null}
             </section>
           )}
           <IdentifyCta />

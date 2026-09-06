@@ -1,5 +1,6 @@
 ﻿import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { z } from "zod";
 import { createNeonServerClient, isNeonConfigured } from "@/lib/db/neon";
 import { createId, notConfiguredResult, nowIso } from "@/lib/data/helpers";
@@ -90,6 +91,24 @@ async function getMappedById<T extends { id: string; published: boolean }>(
   if (!options?.includeUnpublished && !parsed.published) return null;
   return parsed;
 }
+
+const listPublishedCategories = unstable_cache(
+  () => listMapped("categories", mapCategory, categorySchema),
+  ["published-categories"],
+  { revalidate: 3600, tags: ["catalog", "categories"] },
+);
+
+const listPublishedProducts = unstable_cache(
+  () => listMapped("products", mapProduct, productSchema),
+  ["published-products"],
+  { revalidate: 3600, tags: ["catalog", "products"] },
+);
+
+const getPublishedProductBySlug = unstable_cache(
+  (slug: string) => getMappedBySlug("products", mapProduct, productSchema, slug),
+  ["published-product-by-slug"],
+  { revalidate: 3600, tags: ["catalog", "products"] },
+);
 
 async function writeRow<T>(
   table: string,
@@ -207,7 +226,9 @@ export const neonProvider: DataProvider = {
   writable: isNeonConfigured(),
   categories: {
     list: async (options) => {
-      const categories = await listMapped("categories", mapCategory, categorySchema, options);
+      const categories = options?.includeUnpublished
+        ? await listMapped("categories", mapCategory, categorySchema, options)
+        : await listPublishedCategories();
       return categories.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
     },
     getBySlug: (slug, options) => getMappedBySlug("categories", mapCategory, categorySchema, slug, options),
@@ -223,16 +244,18 @@ export const neonProvider: DataProvider = {
   products: {
     list: async (options?: ListOptions) => {
       const [products, categories] = await Promise.all([
-        listMapped("products", mapProduct, productSchema, {
-          includeUnpublished: options?.includeUnpublished,
-        }),
-        listMapped("categories", mapCategory, categorySchema, {
-          includeUnpublished: options?.includeUnpublished,
-        }),
+        options?.includeUnpublished
+          ? listMapped("products", mapProduct, productSchema, { includeUnpublished: true })
+          : listPublishedProducts(),
+        options?.includeUnpublished
+          ? listMapped("categories", mapCategory, categorySchema, { includeUnpublished: true })
+          : listPublishedCategories(),
       ]);
       return filterProducts(products, categories, options);
     },
-    getBySlug: (slug, options) => getMappedBySlug("products", mapProduct, productSchema, slug, options),
+    getBySlug: (slug, options) => options?.includeUnpublished
+      ? getMappedBySlug("products", mapProduct, productSchema, slug, options)
+      : getPublishedProductBySlug(slug),
     getById: (id, options) => getMappedById("products", mapProduct, productSchema, id, options),
     create: (input) => persistProduct(input),
     update: async (id, input) => {
