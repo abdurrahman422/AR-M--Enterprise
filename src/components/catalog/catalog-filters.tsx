@@ -28,7 +28,7 @@ export function CatalogFilters({
   const availabilityOptions = Object.entries(productAvailabilityLabels) as [ProductAvailability, string][];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 border-t-4 border-accent bg-[#e7e8df] p-5">
       <form method="get" action={action} className="space-y-5">
         <div>
           <Label htmlFor="catalog-q">Search</Label>
@@ -67,7 +67,7 @@ export function CatalogFilters({
         </Button>
       </form>
       <div>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Categories</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">Shop the process</p>
         <ul className="mt-3 space-y-1">
           <li>
             <Link
@@ -110,7 +110,7 @@ function CategoryLinks({
         href={href}
         className={cn(
           "block py-1 text-sm",
-          active === node.slug ? "text-foreground" : "text-muted hover:text-foreground",
+          active === node.slug ? "font-semibold text-accent" : "text-muted hover:text-foreground",
         )}
         style={{ paddingLeft: depth * 12 }}
       >

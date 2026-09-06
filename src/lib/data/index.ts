@@ -2,7 +2,7 @@ import "server-only";
 
 import { serverEnv } from "@/config/env";
 import { catalogProvider } from "@/lib/data/catalog-provider";
-import { neonProvider } from "@/lib/data/supabase-provider";
+import { neonProvider } from "@/lib/data/neon-provider";
 import { isNeonConfigured } from "@/lib/db/neon";
 import type { DataProvider } from "@/types/data-provider";
 

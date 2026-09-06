@@ -14,8 +14,8 @@ export default async function TeamPage() {
   return (
     <CollectionPage
       eyebrow="People"
-      title="Team"
-      description="Published team profiles. Names and roles appear only when supplied."
+      title="People behind the plant support."
+      description="Engineering, project, service, and commercial profiles will appear here as verified team information is published."
       emptyTitle="No team profiles published yet"
       emptyDescription="Team members will appear here after profiles are added and published."
       items={team.map((member) => ({

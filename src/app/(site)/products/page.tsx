@@ -46,19 +46,23 @@ export default async function ProductsPage({
   ]);
 
   const activeCategory = categories.find((category) => category.slug === params.category);
+  const featuredIds = new Set(featured.map((product) => product.id));
+  const catalogProducts = hasFilters
+    ? products
+    : products.filter((product) => !featuredIds.has(product.id));
 
   return (
     <>
       <PageHeader
         eyebrow="Catalog"
-        title={activeCategory ? activeCategory.title : "Products"}
+        title={activeCategory ? activeCategory.title : "Equipment for every stage of production."}
         description={
           activeCategory?.summary ||
-          "Published equipment and systems. Listings do not include prices — request a quote or ask an engineer."
+          "Explore intake, processing, pelleting, handling, storage, utilities, automation, and critical spares. Every system is specified and quoted against your plant requirement."
         }
       />
-      <Container className="grid gap-10 py-12 lg:grid-cols-[16rem_minmax(0,1fr)] lg:py-16">
-        <aside>
+      <Container className="grid gap-10 py-16 lg:grid-cols-[17rem_minmax(0,1fr)] lg:py-24">
+        <aside className="lg:sticky lg:top-24 lg:self-start">
           <CatalogFilters
             categories={categories}
             values={{
@@ -72,13 +76,13 @@ export default async function ProductsPage({
         <div className="space-y-10">
           {!hasFilters && featured.length > 0 ? (
             <section>
-              <h2 className="font-heading text-2xl tracking-tight">Featured</h2>
+              <p className="text-xs font-semibold uppercase tracking-[.2em] text-accent">Priority systems</p><h2 className="mt-3 font-heading text-4xl font-semibold tracking-[-.04em]">Start with the production core.</h2>
               <div className="mt-5">
                 <ProductGrid products={featured} categories={categories} />
               </div>
             </section>
           ) : null}
-          {products.length === 0 ? (
+          {catalogProducts.length === 0 ? (
             <EmptyState
               title={hasFilters ? "No matching products" : "No products published yet"}
               description={
@@ -101,12 +105,12 @@ export default async function ProductsPage({
           ) : (
             <section>
               <div className="mb-5 flex items-end justify-between gap-4">
-                <h2 className="font-heading text-2xl tracking-tight">
-                  {hasFilters ? "Results" : "All products"}
+                <h2 className="font-heading text-3xl font-semibold tracking-[-.04em]">
+                  {hasFilters ? "Results" : "Complete catalog"}
                 </h2>
-                <p className="font-mono text-xs text-muted">{products.length} listed</p>
+                <p className="font-mono text-xs text-muted">{catalogProducts.length} listed</p>
               </div>
-              <ProductGrid products={products} categories={categories} />
+              <ProductGrid products={catalogProducts} categories={categories} />
             </section>
           )}
           <IdentifyCta />

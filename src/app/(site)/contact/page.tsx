@@ -27,10 +27,15 @@ export default function ContactPage() {
     <>
       <PageHeader
         eyebrow="Contact"
-        title="Contact sales and engineering"
-        description="Use a quote, consultation, or service request. Direct contact details appear only when they have been provided."
+        title="Bring us the plant challenge."
+        description="Talk to sales, engineering, or service support. We will route the request to the right technical conversation."
       />
-      <Container className="space-y-10 py-14 sm:py-16">
+      <Container className="space-y-12 py-16 sm:py-24">
+        <div className="grid gap-4 md:grid-cols-3">
+          <a href="/request-quote" className="group border border-border bg-surface p-7 hover:border-accent/50"><p className="text-xs uppercase tracking-[0.2em] text-accent">Sales</p><h2 className="mt-5 font-heading text-2xl">Request a quote</h2><p className="mt-3 text-sm leading-6 text-muted">Equipment, systems, parts, and commercial scopes.</p></a>
+          <a href="/consultation" className="group border border-border bg-surface p-7 hover:border-accent/50"><p className="text-xs uppercase tracking-[0.2em] text-accent">Engineering</p><h2 className="mt-5 font-heading text-2xl">Discuss a project</h2><p className="mt-3 text-sm leading-6 text-muted">Process, capacity, layout, automation, and upgrade planning.</p></a>
+          <a href="/service-request" className="group border border-border bg-surface p-7 hover:border-accent/50"><p className="text-xs uppercase tracking-[0.2em] text-accent">Support</p><h2 className="mt-5 font-heading text-2xl">Request service</h2><p className="mt-3 text-sm leading-6 text-muted">Maintenance, troubleshooting, commissioning, and breakdown help.</p></a>
+        </div>
         {hasAnyContact ? (
           <div className="max-w-xl space-y-3 text-sm leading-7 text-muted">
             {hasContactEmail ? (

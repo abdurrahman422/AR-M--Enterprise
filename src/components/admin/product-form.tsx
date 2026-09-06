@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
-import { uploadCatalogMedia } from "@/app/admin/catalog-actions";
 import { ConfirmDelete } from "@/components/admin/confirm-delete";
 import { DriverNote } from "@/components/admin/driver-note";
 import { FieldError } from "@/components/forms/field-error";
@@ -42,7 +41,8 @@ export function ProductForm({
   const [images, setImages] = useState<ImageDraft[]>(product?.images ?? []);
   const [specifications, setSpecifications] = useState<SpecDraft[]>(product?.specifications ?? []);
   const [documents, setDocuments] = useState<DocDraft[]>(product?.documents ?? []);
-  const [uploadMessage, setUploadMessage] = useState<string>();
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
 
   const treeOptions = useMemo(
     () =>
@@ -134,6 +134,8 @@ export function ProductForm({
       <section>
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-heading text-xl">Images</h2>
+          <div className="flex items-center gap-2"><label className="inline-flex h-9 cursor-pointer items-center rounded-xl bg-foreground px-3.5 text-sm font-semibold text-white hover:bg-foreground/85">
+            {uploading ? "Uploading…" : "Upload image"}<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" disabled={uploading} onChange={async(event)=>{const file=event.target.files?.[0];if(!file)return;setUploading(true);setUploadMessage("");try{const body=new FormData();body.set("file",file);const response=await fetch("/api/admin/uploads",{method:"POST",body});const result=await response.json() as {url?:string;message?:string};if(!response.ok||!result.url)throw new Error(result.message||"Upload failed");setImages(current=>[...current,{id:crypto.randomUUID(),url:result.url!,alt:title||file.name,sortOrder:current.length}]);setUploadMessage("Image uploaded. Click Save product to publish it.")}catch(error){setUploadMessage(error instanceof Error?error.message:"Upload failed")}finally{setUploading(false);event.target.value=""}}} /></label>
           <Button
             type="button"
             variant="outline"
@@ -147,7 +149,9 @@ export function ProductForm({
           >
             Add image
           </Button>
+          </div>
         </div>
+        {uploadMessage ? <p className="mt-3 text-sm text-muted">{uploadMessage}</p> : null}
         <div className="mt-4 space-y-4">
           {images.map((image, index) => (
             <div key={image.id} className="grid gap-3 border border-border p-4 sm:grid-cols-[1fr_1fr_auto]">
@@ -167,32 +171,7 @@ export function ProductForm({
                   setImages((current) => current.map((item) => (item.id === image.id ? { ...item, alt: value } : item)))
                 }
               />
-              <div className="flex items-end gap-2">
-                <label className="text-xs text-muted">
-                  Upload
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="mt-2 block w-full text-xs"
-                    onChange={async (event) => {
-                      const file = event.target.files?.[0];
-                      event.target.value = "";
-                      if (!file) return;
-                      const payload = new FormData();
-                      payload.set("file", file);
-                      payload.set("folder", "products");
-                      const result = await uploadCatalogMedia(payload);
-                      if (result.ok) {
-                        setImages((current) =>
-                          current.map((item) => (item.id === image.id ? { ...item, url: result.url } : item)),
-                        );
-                        setUploadMessage("Image stored.");
-                      } else {
-                        setUploadMessage(result.message);
-                      }
-                    }}
-                  />
-                </label>
+              <div className="flex items-end">
                 <Button type="button" variant="ghost" size="sm" onClick={() => setImages((current) => current.filter((item) => item.id !== image.id).map((item, order) => ({ ...item, sortOrder: order })))}>
                   Remove
                 </Button>
@@ -255,36 +234,7 @@ export function ProductForm({
               <Field id={`doc-title-${document.id}`} label="Title" value={document.title} onChange={(value) => setDocuments((current) => current.map((item) => (item.id === document.id ? { ...item, title: value } : item)))} />
               <Field id={`doc-url-${document.id}`} label="URL" value={document.url} onChange={(value) => setDocuments((current) => current.map((item) => (item.id === document.id ? { ...item, url: value } : item)))} />
               <Field id={`doc-type-${document.id}`} label="Type" value={document.fileType} onChange={(value) => setDocuments((current) => current.map((item) => (item.id === document.id ? { ...item, fileType: value } : item)))} />
-              <div className="flex items-end gap-2">
-                <label className="text-xs text-muted">
-                  Upload
-                  <input
-                    type="file"
-                    accept="application/pdf,image/jpeg,image/png,image/webp"
-                    className="mt-2 block w-full text-xs"
-                    onChange={async (event) => {
-                      const file = event.target.files?.[0];
-                      event.target.value = "";
-                      if (!file) return;
-                      const payload = new FormData();
-                      payload.set("file", file);
-                      payload.set("folder", "documents");
-                      const result = await uploadCatalogMedia(payload);
-                      if (result.ok) {
-                        setDocuments((current) =>
-                          current.map((item) =>
-                            item.id === document.id
-                              ? { ...item, url: result.url, fileType: file.type.includes("pdf") ? "pdf" : item.fileType }
-                              : item,
-                          ),
-                        );
-                        setUploadMessage("Document stored.");
-                      } else {
-                        setUploadMessage(result.message);
-                      }
-                    }}
-                  />
-                </label>
+              <div className="flex items-end">
                 <Button type="button" variant="ghost" size="sm" onClick={() => setDocuments((current) => current.filter((item) => item.id !== document.id))}>
                   Remove
                 </Button>
@@ -299,7 +249,6 @@ export function ProductForm({
         <BooleanField name="published" label="Published" defaultChecked={product?.published} />
         <BooleanField name="featured" label="Featured" defaultChecked={product?.featured} />
       </section>
-      {uploadMessage ? <StatusMessage tone="neutral">{uploadMessage}</StatusMessage> : null}
       {state.message ? (
         <StatusMessage tone={state.status === "error" ? "danger" : state.status === "success" ? "success" : "neutral"}>
           {state.message}

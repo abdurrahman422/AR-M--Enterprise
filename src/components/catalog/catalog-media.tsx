@@ -23,6 +23,6 @@ export function CatalogMedia({
   return (
     // External catalog URLs are admin-entered and not known at build time.
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className={cn("h-full w-full object-cover", className)} />
+    <img src={src} alt={alt} className={cn("h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.035]", className)} />
   );
 }

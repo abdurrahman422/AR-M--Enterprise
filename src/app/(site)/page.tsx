@@ -1,111 +1,28 @@
+import Image from "next/image";
 import Link from "next/link";
-import { IdentifyCta } from "@/components/catalog/identify-cta";
+import { CatalogMedia } from "@/components/catalog/catalog-media";
 import { ProductGrid } from "@/components/catalog/product-grid";
-import { EntryCard } from "@/components/content/entry-card";
 import { QuoteCta } from "@/components/content/quote-cta";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { siteConfig } from "@/config/site";
 import { data } from "@/lib/data";
 
-const capabilityLinks = [
-  { href: "/products", label: "Products", description: "Equipment and systems specified without public pricing." },
-  { href: "/services", label: "Services", description: "Engineering, commissioning, and mill support." },
-  { href: "/solutions", label: "Solutions", description: "Process-focused industrial applications." },
-  { href: "/projects", label: "Projects", description: "Documented work, published only when verified." },
-];
+const plantFlow = [["01", "Receive", "Intake, cleaning and storage"], ["02", "Prepare", "Grinding, dosing and mixing"], ["03", "Transform", "Conditioning and pelleting"], ["04", "Finish", "Cooling, screening and packing"]] as const;
 
 export default async function HomePage() {
-  const [featured, categories, services] = await Promise.all([
-    data.products.list({ featuredOnly: true }),
-    data.categories.list(),
-    data.services.list(),
-  ]);
-
-  return (
-    <>
-      <section className="border-b border-border">
-        <Container className="py-20 sm:py-28">
-          <p className="text-xs uppercase tracking-[0.22em] text-accent">{siteConfig.descriptor}</p>
-          <h1 className="mt-6 max-w-4xl font-heading text-5xl leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-            {siteConfig.name}
-          </h1>
-          <p className="mt-6 max-w-2xl text-xl leading-8 text-muted">{siteConfig.tagline}</p>
-          <div className="mt-10">
-            <QuoteCta />
-          </div>
-        </Container>
-      </section>
-      <section>
-        <Container className="py-16 sm:py-20">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {capabilityLinks.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="border border-border bg-surface p-6 transition-colors hover:border-foreground/30"
-              >
-                <h2 className="font-heading text-xl text-foreground">{item.label}</h2>
-                <p className="mt-3 text-sm leading-6 text-muted">{item.description}</p>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section>
-      {services.length > 0 ? (
-        <section className="border-t border-border">
-          <Container className="py-16 sm:py-20">
-            <h2 className="font-heading text-2xl tracking-tight">Services</h2>
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {services.slice(0, 4).map((service, index) => (
-                <EntryCard
-                  key={service.id}
-                  href={`/services/${service.slug}`}
-                  index={String(index + 1).padStart(2, "0")}
-                  title={service.title}
-                  summary={service.summary}
-                />
-              ))}
-            </div>
-          </Container>
-        </section>
-      ) : null}
-      {categories.length > 0 ? (
-        <section className="border-t border-border">
-          <Container className="py-16 sm:py-20">
-            <h2 className="font-heading text-2xl tracking-tight">Categories</h2>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {categories
-                .filter((category) => !category.parentId)
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-                .map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/categories/${category.slug}`}
-                    className="border border-border bg-surface p-5 hover:border-foreground/30"
-                  >
-                    <h3 className="font-heading text-lg">{category.title}</h3>
-                    {category.summary ? (
-                      <p className="mt-2 text-sm leading-6 text-muted">{category.summary}</p>
-                    ) : null}
-                  </Link>
-                ))}
-            </div>
-          </Container>
-        </section>
-      ) : null}
-      {featured.length > 0 ? (
-        <section className="border-t border-border">
-          <Container className="py-16 sm:py-20">
-            <h2 className="font-heading text-2xl tracking-tight">Featured products</h2>
-            <div className="mt-6">
-              <ProductGrid products={featured} categories={categories} />
-            </div>
-          </Container>
-        </section>
-      ) : null}
-      <Container className="pb-16 sm:pb-20">
-        <IdentifyCta />
+  const [featured, categories, services, solutions] = await Promise.all([data.products.list({ featuredOnly: true }), data.categories.list(), data.services.list(), data.solutions.list()]);
+  return <>
+    <section className="relative isolate overflow-hidden bg-foreground text-white">
+      <div className="absolute inset-0 -z-20"><CatalogMedia src="/images/industrial/hero-feed-mill.png" alt="Modern feed mill processing plant" className="object-cover opacity-45" /></div>
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(9,35,62,.98)_0%,rgba(9,35,62,.9)_46%,rgba(9,35,62,.28)_100%)]" />
+      <Container className="grid min-h-[720px] items-center py-16 lg:grid-cols-[1.15fr_.85fr] lg:py-24">
+        <div className="max-w-3xl"><p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[.25em] text-accent-soft"><span className="h-px w-10 bg-accent" /> Industrial engineering · Bangladesh</p><h1 className="mt-7 font-heading text-[clamp(3.5rem,7.6vw,7rem)] font-semibold leading-[.88] tracking-[-.065em]">Powering<br /><span className="text-white/55">production.</span></h1><p className="mt-8 max-w-2xl text-lg leading-8 text-white/72 sm:text-xl">Integrated mechanical, electrical and automation solutions for feed mills that cannot afford uncertainty.</p><div className="mt-9 flex flex-wrap gap-3"><QuoteCta /><Button href="/services" variant="inverse">Explore capabilities →</Button></div><div className="mt-14 grid max-w-2xl grid-cols-3 border-t border-white/20 pt-7">{[["End-to-end","One accountable team"],["24/7","Critical support path"],["Site-fit","Engineered to reality"]].map(([value,label]) => <div key={value} className="border-r border-white/20 px-4 first:pl-0 last:border-0"><p className="text-xl font-semibold sm:text-2xl">{value}</p><p className="mt-1 text-[10px] uppercase tracking-[.14em] text-white/50 sm:text-xs">{label}</p></div>)}</div></div>
+        <div className="hidden justify-end lg:flex"><div className="relative h-72 w-72 overflow-hidden rounded-[2rem] border border-white/20 bg-white/95 p-3 shadow-2xl"><Image src="/brand-mark.jpg" alt="AR&M Enterprise" fill sizes="288px" className="object-contain p-4" /></div></div>
       </Container>
-    </>
-  );
+    </section>
+    <section className="border-b border-border bg-white"><Container className="py-20 sm:py-28"><div className="grid gap-12 lg:grid-cols-[.75fr_1.25fr]"><div><p className="section-label">Complete plant capability</p><h2 className="mt-5 max-w-md font-heading text-4xl font-semibold leading-[1.02] tracking-[-.045em] sm:text-6xl">One partner across the entire line.</h2><p className="mt-6 max-w-md leading-7 text-muted">From first layout to daily uptime, every discipline is coordinated around output, quality and maintainability.</p></div><div className="grid sm:grid-cols-2">{plantFlow.map(([number,title,detail]) => <div key={number} className="group border-l border-t border-border p-7 transition-colors hover:bg-foreground hover:text-white"><span className="font-mono text-xs text-accent">{number}</span><h3 className="mt-12 text-2xl font-semibold">{title}</h3><p className="mt-2 text-sm text-muted group-hover:text-white/60">{detail}</p></div>)}</div></div></Container></section>
+    {featured.length > 0 ? <section><Container className="py-20 sm:py-28"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="section-label">Engineered equipment</p><h2 className="mt-4 font-heading text-4xl font-semibold tracking-[-.045em] sm:text-5xl">Built for continuous duty.</h2></div><Link href="/products" className="text-sm font-semibold text-accent">View complete equipment range →</Link></div><div className="mt-12"><ProductGrid products={featured} categories={categories} /></div></Container></section> : null}
+    <section className="bg-[#e9eef3]"><Container className="py-20 sm:py-28"><div className="mb-12 grid gap-6 lg:grid-cols-2"><div><p className="section-label">Operational solutions</p><h2 className="mt-4 font-heading text-4xl font-semibold tracking-[-.045em] sm:text-5xl">Start with the constraint.</h2></div><p className="max-w-xl self-end leading-7 text-muted">Low output, unstable quality or repeat breakdowns—we diagnose the operating problem before proposing a machine.</p></div><div className="grid gap-5 md:grid-cols-2">{solutions.slice(0,4).map((item,index) => <Link key={item.id} href={`/solutions/${item.slug}`} className="group rounded-3xl border border-border bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-accent/30 hover:shadow-xl"><div className="flex items-start justify-between"><span className="font-mono text-xs text-accent">0{index+1}</span><span className="grid h-9 w-9 place-items-center rounded-full border border-border transition-colors group-hover:bg-accent group-hover:text-white">↗</span></div><h3 className="mt-10 text-2xl font-semibold">{item.title}</h3><p className="mt-3 text-sm leading-6 text-muted">{item.summary}</p></Link>)}</div></Container></section>
+    <section className="bg-foreground text-white"><Container className="py-20 sm:py-28"><div className="grid gap-12 lg:grid-cols-[.65fr_1.35fr]"><div><p className="section-label text-accent-soft">Engineering services</p><h2 className="mt-4 font-heading text-4xl font-semibold tracking-[-.045em] sm:text-5xl">Expertise that stays accountable.</h2><Button href="/services" variant="inverse" className="mt-8">View all services</Button></div><div className="border-t border-white/15">{services.slice(0,6).map((service,index) => <Link key={service.id} href={`/services/${service.slug}`} className="group grid gap-3 border-b border-white/15 py-6 transition-all hover:bg-white/5 hover:px-4 sm:grid-cols-[3rem_1fr_1.1fr] sm:items-center"><span className="font-mono text-xs text-accent-soft">{String(index+1).padStart(2,"0")}</span><h3 className="text-xl font-semibold">{service.title}</h3><p className="text-sm leading-6 text-white/50">{service.summary}</p></Link>)}</div></div></Container></section>
+  </>;
 }

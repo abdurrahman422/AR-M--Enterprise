@@ -15,13 +15,9 @@ Copy `.env.example` to `.env.local` and set real values. Do not commit `.env.loc
 ## Neon database setup
 
 1. Create a Neon database and set `DATABASE_URL` in the deployment environment.
-2. Run the SQL files in `supabase/migrations` in filename order against Neon. They contain PostgreSQL schema and seed SQL; Storage-specific statements are conditional and can be skipped on Neon.
+2. Run the SQL files in `database/migrations` in filename order against Neon.
 3. Set `DATA_DRIVER=neon`. All database reads and writes use the server-only `DATABASE_URL`.
 4. Create the admin credentials in the deployment environment before opening `/admin/login`.
-
-## Optional Supabase Storage
-
-File uploads remain Supabase-backed in this phase. Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` to keep upload functionality enabled. These credentials are not used for database access.
 
 ## Build and deploy
 
@@ -33,8 +29,16 @@ npm run build
 npm run start
 ```
 
-Set all environment variables in the hosting provider, deploy the production build, then verify the canonical URL, sitemap, public forms, media upload, admin login, and inquiry inbox. Admin routes use `noindex` metadata and are protected by the signed HTTP-only session cookie.
+Set all environment variables in the hosting provider, deploy the production build, then verify the canonical URL, sitemap, public forms, URL-based media, admin login, and inquiry inbox. Admin routes use `noindex` metadata and are protected by the signed HTTP-only session cookie.
+
+### Vercel
+
+1. Import the repository in Vercel and keep the detected **Next.js** framework preset.
+2. Add the variables from `.env.example` under Project Settings → Environment Variables. At minimum, production requires `NEXT_PUBLIC_SITE_URL`, `DATA_DRIVER=neon`, `DATABASE_URL`, `AUTH_SECRET`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD`.
+3. Set `NEXT_PUBLIC_SITE_URL` to the final `https://` production domain, without a trailing slash.
+4. Deploy with the default `npm run build` command. The catalog is already stored in Neon; do not run seed migrations from a browser request.
+5. After deployment, verify `/products`, one product detail page, `/admin/login`, a form submission, `/robots.txt`, and `/sitemap.xml`.
 
 ## External blockers
 
-Real company contact details, Neon `DATABASE_URL`, admin credentials, optional Supabase Storage credentials, and email provider credentials must be supplied by the business owner. The repository intentionally leaves unknown business claims and contact values blank.
+Real company contact details, Neon `DATABASE_URL`, admin credentials, and email provider credentials must be supplied by the business owner. The repository intentionally leaves unknown business claims and contact values blank.

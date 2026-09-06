@@ -59,6 +59,6 @@ export function notConfiguredResult(entity: string) {
   return {
     ok: false as const,
     code: "NOT_CONFIGURED" as const,
-    message: `${entity} cannot be stored until PostgreSQL/Supabase is connected.`,
+    message: `${entity} cannot be stored until PostgreSQL is connected.`,
   };
 }

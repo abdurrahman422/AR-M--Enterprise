@@ -46,6 +46,7 @@ export const footerNavigation: { title: string; items: NavItem[] }[] = [
 
 export const adminNavigation: NavItem[] = [
   { label: "Overview", href: "/admin" },
+  { label: "Analytics & history", href: "/admin/analytics" },
   { label: "Products", href: "/admin/products" },
   { label: "Categories", href: "/admin/categories" },
   { label: "Services", href: "/admin/services" },

@@ -1,5 +1,5 @@
 -- AR&M Enterprise content and inquiry schema
--- PostgreSQL / Supabase. No public product prices.
+-- PostgreSQL schema. No public product prices.
 
 create extension if not exists pgcrypto;
 
@@ -252,5 +252,5 @@ drop trigger if exists service_requests_set_updated_at on service_requests;
 create trigger service_requests_set_updated_at before update on service_requests for each row execute function set_updated_at();
 
 -- Database access is server-only through DATABASE_URL. Neon does not provide
--- Supabase's anon/authenticated roles, so the old Supabase RLS policies are
+-- public database roles, so any legacy RLS policies are
 -- intentionally not part of the Neon schema path.

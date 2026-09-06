@@ -41,24 +41,5 @@ insert into site_settings (id, payload) values ('default', '{}'::jsonb) on confl
 
 -- Inquiries and settings are accessed only by server actions through DATABASE_URL.
 
-do $$
-begin
-  if exists (select 1 from information_schema.tables where table_schema = 'storage' and table_name = 'objects') then
-    execute 'drop policy if exists "public read media" on storage.objects';
-    execute 'create policy "public read media" on storage.objects for select to anon, authenticated using (bucket_id = ''media'')';
-    execute 'drop policy if exists "service role manage media" on storage.objects';
-    execute 'create policy "service role manage media" on storage.objects for all to service_role using (bucket_id = ''media'') with check (bucket_id = ''media'')';
-  end if;
-end $$;
-
 alter table resources add column if not exists sort_order integer not null default 0;
 alter table testimonials add column if not exists sort_order integer not null default 0;
-
-do $$
-begin
-  if exists (select 1 from information_schema.schemata where schema_name = 'storage') then
-    insert into storage.buckets (id, name, public)
-    values ('media', 'media', true)
-    on conflict (id) do nothing;
-  end if;
-end $$;

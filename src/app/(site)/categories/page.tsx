@@ -30,8 +30,8 @@ export default async function CategoriesPage() {
     <>
       <PageHeader
         eyebrow="Catalog"
-        title="Categories"
-        description="Equipment is grouped by plant function. Subcategories appear when they are published."
+        title="Navigate the complete plant."
+        description="Find equipment and critical components by their role in processing, movement, storage, control, and maintenance."
       />
       <Container className="space-y-10 py-14 sm:py-16">
         {tree.length === 0 ? (
@@ -42,8 +42,8 @@ export default async function CategoriesPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {tree.map((category) => (
-              <article key={category.id} className="border border-border bg-surface p-6">
-                <p className="font-mono text-xs text-muted">{String(counts.get(category.id) ?? 0).padStart(2, "0")} listed</p>
+              <article key={category.id} className="group border border-border bg-surface p-7 transition-all hover:-translate-y-1 hover:border-accent/50">
+                <p className="font-mono text-xs text-accent">{String(counts.get(category.id) ?? 0).padStart(2, "0")} listed</p>
                 <h2 className="mt-3 font-heading text-2xl">
                   <Link href={`/categories/${category.slug}`} className="hover:text-offwhite">
                     {category.title}

@@ -28,9 +28,12 @@ export function DetailPage({
         description={entity.summary}
         actions={<QuoteCta productTitle={fallbackTitle ?? entity.title} compact />}
       />
-      <Container className="py-14 sm:py-16">
+      <Container className="py-16 sm:py-24">
         {entity.description ? (
-          <div className="max-w-3xl text-base leading-8 text-muted">{entity.description}</div>
+          <div className="grid gap-8 lg:grid-cols-[14rem_minmax(0,1fr)]">
+            <p className="text-xs uppercase tracking-[0.22em] text-accent">Scope overview</p>
+            <div className="max-w-3xl whitespace-pre-wrap text-lg leading-9 text-muted">{entity.description}</div>
+          </div>
         ) : (
           <p className="max-w-2xl text-sm leading-6 text-muted">
             Detailed content for this entry will be published when it is available.

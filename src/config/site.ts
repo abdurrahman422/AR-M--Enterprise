@@ -4,7 +4,7 @@ export const siteConfig = {
   name: "AR&M Enterprise",
   shortName: "AR&M",
   descriptor: "Feed Mill Engineering & Industrial Solutions",
-  tagline: "Engineering Better Feed Mill Performance.",
+  tagline: "Commitment is our asset",
   url: publicEnv.siteUrl || "http://localhost:3000",
   locale: "en",
   contact: {

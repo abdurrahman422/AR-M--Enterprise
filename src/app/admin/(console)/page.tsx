@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { adminNavigation } from "@/config/navigation";
 import { data, getDataProvider } from "@/lib/data";
+import { getAnalyticsSummary } from "@/lib/analytics";
 
 export default async function AdminOverviewPage() {
   const unpublished = { includeUnpublished: true };
-  const [products, categories, services, solutions, projects, resources, testimonials, team, quotes, consultations, serviceRequests, identifyRequests] =
+  const [products, categories, services, solutions, projects, resources, testimonials, team, quotes, consultations, serviceRequests, identifyRequests, analytics] =
     await Promise.all([
       data.products.list(unpublished),
       data.categories.list(unpublished),
@@ -18,11 +19,16 @@ export default async function AdminOverviewPage() {
       data.inquiries.list("consultation"),
       data.inquiries.list("service"),
       data.inquiries.list("identify"),
+      getAnalyticsSummary(),
     ]);
 
   const provider = getDataProvider();
   const driver = provider.driver;
   const stats = [
+    { label: "Unique visitors", value: analytics.uniqueVisitors, href: "/admin/analytics" },
+    { label: "Page views", value: analytics.totalViews, href: "/admin/analytics" },
+    { label: "Product views", value: analytics.productViews, href: "/admin/analytics" },
+    { label: "Quote clicks", value: analytics.quoteClicks, href: "/admin/analytics" },
     { label: "Products", value: products.length, href: "/admin/products" },
     { label: "Categories", value: categories.length, href: "/admin/categories" },
     { label: "Services", value: services.length, href: "/admin/services" },
@@ -50,7 +56,7 @@ export default async function AdminOverviewPage() {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
           <Link
-            key={stat.href}
+            key={stat.label}
             href={stat.href}
             className="border border-border bg-surface px-5 py-4 hover:border-foreground/30"
           >

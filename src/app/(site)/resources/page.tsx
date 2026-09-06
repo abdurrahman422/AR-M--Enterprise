@@ -15,8 +15,8 @@ export default async function ResourcesPage() {
   return (
     <CollectionPage
       eyebrow="Library"
-      title="Resources"
-      description="Published articles, datasheets, and technical documents."
+      title="Technical knowledge for better decisions."
+      description="Guides, equipment notes, datasheets, and practical resources for owners, engineers, and mill teams."
       emptyTitle="No resources published yet"
       emptyDescription="Resources will appear here after they are added and published."
       items={resources.map((resource) => ({

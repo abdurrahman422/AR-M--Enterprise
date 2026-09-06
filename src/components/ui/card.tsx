@@ -26,8 +26,8 @@ export function Card({ href, eyebrow, title, description, meta, children, classN
   );
 
   const classes = cn(
-    "block border border-border bg-surface p-6 transition-colors",
-    href && "hover:border-foreground/30",
+    "group block border-t border-foreground/30 bg-transparent p-7 transition-colors duration-300",
+    href && "hover:bg-[#d8ff55]",
     className,
   );
 

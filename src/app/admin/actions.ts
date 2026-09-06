@@ -12,6 +12,7 @@ import {
 import { stringField, type ActionState } from "@/lib/forms";
 import { flattenFieldErrors } from "@/lib/validations/common";
 import { adminLoginSchema } from "@/lib/validations/auth";
+import { checkRateLimit, clearRateLimit } from "@/lib/security/rate-limit";
 
 export type LoginState = ActionState;
 
@@ -23,8 +24,23 @@ export async function loginAdmin(_prev: LoginState, formData: FormData): Promise
     };
   }
 
+  const submittedEmail = stringField(formData, "email");
+  const rateLimit = await checkRateLimit({
+    scope: "admin-login",
+    limit: 5,
+    windowMs: 15 * 60 * 1000,
+    discriminator: submittedEmail,
+  });
+  if (!rateLimit.allowed) {
+    const minutes = Math.max(1, Math.ceil(rateLimit.retryAfterSeconds / 60));
+    return {
+      status: "error",
+      message: `Too many sign-in attempts. Try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
+  }
+
   const parsed = adminLoginSchema.safeParse({
-    email: stringField(formData, "email"),
+    email: submittedEmail,
     password: stringField(formData, "password"),
   });
 
@@ -47,6 +63,7 @@ export async function loginAdmin(_prev: LoginState, formData: FormData): Promise
   }
 
   const token = await createAdminSession(parsed.data.email);
+  clearRateLimit(rateLimit.key);
   await setAdminSessionCookie(token);
   redirect("/admin");
 }
@@ -55,5 +72,4 @@ export async function logoutAdmin(): Promise<void> {
   await clearAdminSessionCookie();
   redirect("/admin/login");
 }
-
 

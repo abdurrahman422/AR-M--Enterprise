@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { parseCategoryForm, parsePageForm, parseProductForm, parseProjectForm, parseResourceForm, parseSolutionForm, parseTeamForm, parseTestimonialForm } from "@/lib/admin/parse-catalog";
 import { requireAdmin } from "@/lib/auth/guards";
 import { data } from "@/lib/data";
-import { savePublicUpload } from "@/lib/data/uploads";
 import { stringField, type ActionState } from "@/lib/forms";
 import { boolField } from "@/lib/forms";
 import { siteSettingsSchema } from "@/lib/validations/content";
@@ -201,18 +200,6 @@ export async function deleteProjectAction(formData: FormData): Promise<void> {
   refreshCatalog();
   if (!result.ok) redirect(`/admin/projects?error=${encodeURIComponent(result.message)}`);
   redirect("/admin/projects?deleted=1");
-}
-
-export async function uploadCatalogMedia(formData: FormData) {
-  await requireAdmin();
-  const file = formData.get("file");
-  const folder = stringField(formData, "folder");
-  if (!(file instanceof File)) {
-    return { ok: false as const, message: "Choose a file to upload." };
-  }
-  const target =
-    folder === "documents" || folder === "identify" || folder === "projects" ? folder : "products";
-  return savePublicUpload(file, target);
 }
 
 export async function saveSettingsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

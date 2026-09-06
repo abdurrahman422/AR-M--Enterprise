@@ -18,7 +18,7 @@ export function IdentifyForm() {
   );
 
   return (
-    <form action={action} className="max-w-xl space-y-5" encType="multipart/form-data">
+    <form action={action} className="max-w-xl space-y-5">
       <input type="hidden" name="kind" value="identify" />
       <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
         <label htmlFor="identify-website">Website</label>
@@ -32,11 +32,6 @@ export function IdentifyForm() {
       <div>
         <Label htmlFor="identify-requirement">Requirement</Label>
         <Textarea id="identify-requirement" name="requirement" className="mt-2" placeholder="What should be identified or matched?" />
-      </div>
-      <div>
-        <Label htmlFor="identify-photo">Photo or marking</Label>
-        <Input id="identify-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="mt-2" />
-        <p className="mt-1.5 text-xs text-muted">JPG, PNG, WebP, or PDF. 8MB maximum.</p>
       </div>
       <div>
         <Label htmlFor="identify-message">What should we match?</Label>

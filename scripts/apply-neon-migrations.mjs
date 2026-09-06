@@ -20,7 +20,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 const client = new Client({ connectionString: process.env.DATABASE_URL });
-const migrationDir = path.join(process.cwd(), "supabase", "migrations");
+const migrationDir = path.join(process.cwd(), "database", "migrations");
 
 try {
   await client.connect();

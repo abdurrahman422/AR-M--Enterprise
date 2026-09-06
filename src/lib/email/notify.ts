@@ -14,18 +14,22 @@ export type NotifyResult = {
 
 export function isEmailConfigured(settings?: SiteSettings): boolean {
   const to = settings?.notifyEmail || serverEnv.inquiryNotifyEmail;
-  return isFilled(serverEnv.resendApiKey) && isFilled(to);
+  return (
+    isFilled(serverEnv.resendApiKey) &&
+    isFilled(serverEnv.emailFrom) &&
+    isFilled(to)
+  );
 }
 
 export async function notifyInquiry(inquiry: Inquiry, settings?: SiteSettings): Promise<NotifyResult> {
   const enabled = settings?.notifyEnabled ?? true;
   const to = settings?.notifyEmail || serverEnv.inquiryNotifyEmail;
-  const from = serverEnv.emailFrom || "AR&M Enterprise <noreply@localhost>";
+  const from = serverEnv.emailFrom;
 
   if (!enabled) {
     return { attempted: false, sent: false, message: "Email notifications are disabled." };
   }
-  if (!isFilled(serverEnv.resendApiKey) || !isFilled(to)) {
+  if (!isEmailConfigured(settings)) {
     return { attempted: false, sent: false, message: "Email notifications are not configured." };
   }
 

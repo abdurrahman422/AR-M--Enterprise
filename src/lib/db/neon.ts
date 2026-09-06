@@ -100,3 +100,8 @@ export function createNeonServerClient() {
   if (!isNeonConfigured()) throw new Error("DATABASE_URL is not configured.");
   return { from: (table: string) => new NeonQuery(table) };
 }
+
+export async function queryDatabase<T extends Row = Row>(text: string, parameters: unknown[] = []): Promise<T[]> {
+  const result = await getPool().query(text, parameters);
+  return result.rows as T[];
+}

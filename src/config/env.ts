@@ -13,13 +13,10 @@ export const publicEnv = {
   instagram: read("NEXT_PUBLIC_INSTAGRAM"),
   youtube: read("NEXT_PUBLIC_YOUTUBE"),
   x: read("NEXT_PUBLIC_X"),
-  supabaseUrl: read("NEXT_PUBLIC_SUPABASE_URL"),
-  supabaseAnonKey: read("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
 };
 
 export const serverEnv = {
   dataDriver: read("DATA_DRIVER") || (read("DATABASE_URL") ? "neon" : "catalog"),
-  supabaseServiceRoleKey: read("SUPABASE_SERVICE_ROLE_KEY"),
   databaseUrl: read("DATABASE_URL"),
   authSecret: read("AUTH_SECRET"),
   adminEmail: read("ADMIN_EMAIL"),

@@ -58,10 +58,10 @@ export default async function ProductDetailPage({ params }: Props) {
   }, {});
 
   return (
-    <Container className="space-y-16 py-12 sm:py-16">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
+    <Container className="space-y-20 py-16 sm:py-24">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-16">
         <ProductGallery images={product.images} title={product.title} />
-        <div>
+        <div className="lg:sticky lg:top-28 lg:self-start">
           <p className="text-xs uppercase tracking-[0.22em] text-accent">
             {category ? (
               <Link href={`/products?category=${category.slug}`} className="hover:text-accent-hover">
@@ -71,15 +71,15 @@ export default async function ProductDetailPage({ params }: Props) {
               "Product"
             )}
           </p>
-          <h1 className="mt-4 font-heading text-4xl leading-tight tracking-tight sm:text-5xl">{product.title}</h1>
-          {product.summary ? <p className="mt-5 text-base leading-7 text-muted">{product.summary}</p> : null}
+          <h1 className="mt-4 font-heading text-4xl font-medium leading-tight tracking-[-0.035em] sm:text-6xl">{product.title}</h1>
+          {product.summary ? <p className="mt-6 text-lg leading-8 text-muted">{product.summary}</p> : null}
           <div className="mt-6 flex flex-wrap gap-2">
             {product.brand ? <Badge>{product.brand}</Badge> : null}
             {product.model ? <Badge>{product.model}</Badge> : null}
             {product.sku ? <Badge>SKU {product.sku}</Badge> : null}
             <Badge>{productAvailabilityLabels[product.availability]}</Badge>
           </div>
-          <dl className="mt-8 divide-y divide-border border-y border-border text-sm">
+          <dl className="mt-9 divide-y divide-border border-y border-border bg-surface/40 px-5 text-sm">
             {product.brand ? (
               <div className="grid grid-cols-2 gap-4 py-3">
                 <dt className="text-muted">Brand</dt>
@@ -114,8 +114,9 @@ export default async function ProductDetailPage({ params }: Props) {
       </div>
       {product.description ? (
         <section>
-          <h2 className="font-heading text-2xl">Description</h2>
-          <div className="mt-5 max-w-3xl whitespace-pre-wrap text-base leading-8 text-muted">{product.description}</div>
+          <p className="text-xs uppercase tracking-[0.22em] text-accent">Equipment overview</p>
+          <h2 className="mt-4 font-heading text-3xl sm:text-4xl">Built around the process requirement.</h2>
+          <div className="mt-6 max-w-3xl whitespace-pre-wrap text-lg leading-9 text-muted">{product.description}</div>
         </section>
       ) : null}
       {product.specifications.length > 0 ? (

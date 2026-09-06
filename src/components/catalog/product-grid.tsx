@@ -12,7 +12,7 @@ export function ProductGrid({
   const bySlug = new Map(categories.map((category) => [category.slug, category]));
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-x-7 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
       {products.map((product) => (
         <ProductCard
           key={product.id}

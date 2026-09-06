@@ -2,10 +2,11 @@
 
 import { hasContactEmail, siteConfig } from "@/config/site";
 import { data } from "@/lib/data";
-import { savePublicUpload } from "@/lib/data/uploads";
 import { stringField, type ActionState } from "@/lib/forms";
 import { flattenFieldErrors } from "@/lib/validations/common";
 import { inquirySchema } from "@/lib/validations/inquiry";
+import { notifyInquiry } from "@/lib/email/notify";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 export type InquiryActionState = ActionState;
 
@@ -44,22 +45,23 @@ export async function submitInquiry(
   }
 
   const { website, ...payload } = parsed.data;
-  const photo = formData.get("photo");
-  if (photo instanceof File && photo.size > 0) {
-    const uploaded = await savePublicUpload(photo, payload.kind === "identify" ? "identify" : "documents");
-    if (uploaded.ok) {
-      if (payload.kind === "identify") {
-        payload.photoUrl = uploaded.url;
-        payload.photoName = uploaded.fileName;
-      }
-      payload.fileUrl = uploaded.url;
-      payload.fileName = uploaded.fileName;
-    }
-  }
-
   if (website) {
     return { status: "success", message: "Request received." };
   }
+
+  const rateLimit = await checkRateLimit({
+    scope: "public-inquiry",
+    limit: 5,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!rateLimit.allowed) {
+    const minutes = Math.max(1, Math.ceil(rateLimit.retryAfterSeconds / 60));
+    return {
+      status: "error",
+      message: `Too many requests. Please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
+  }
+
   const result =
     payload.kind === "quote"
       ? await data.inquiries.createQuote(payload)
@@ -70,9 +72,23 @@ export async function submitInquiry(
           : await data.inquiries.createIdentify(payload);
 
   if (result.ok) {
+    let message =
+      "Request stored. Email notifications are unavailable; the team can still see it in the admin inbox.";
+    try {
+      const settings = await data.settings.get();
+      const notification = await notifyInquiry(result.data, settings);
+      message = notification.sent
+        ? "Request stored and the team has been notified."
+        : notification.attempted
+          ? "Request stored, but the notification email could not be sent. The team can still see it in the admin inbox."
+          : "Request stored. Email notifications are disabled or not configured; the team can still see it in the admin inbox.";
+    } catch {
+      // The inquiry is already durable. A notification problem must not turn the
+      // successful submission into an error or encourage a duplicate request.
+    }
     return {
       status: "success",
-      message: "Request stored. The team will follow up on this channel.",
+      message,
     };
   }
 
@@ -92,5 +108,3 @@ export async function submitInquiry(
     message: result.message,
   };
 }
-
-

@@ -17,13 +17,17 @@ import {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-surface">
-      <Container className="py-14 sm:py-16">
+    <footer className="border-t border-foreground/20 bg-foreground text-white">
+      <Container className="py-16 sm:py-20">
+        <div className="mb-16 flex flex-col gap-6 border-b border-white/20 pb-12 sm:flex-row sm:items-end sm:justify-between">
+          <div><p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#d8ff55]">Start a conversation</p><h2 className="mt-4 max-w-2xl font-heading text-3xl font-semibold tracking-[-.04em] sm:text-5xl">Bring the plant problem. We will bring the right disciplines.</h2></div>
+          <Link href="/request-quote" className="text-sm font-semibold text-white hover:text-[#d8ff55]">Request a technical quote →</Link>
+        </div>
         <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <SiteMark />
             <p className="mt-5 max-w-sm text-sm leading-6 text-muted">{siteConfig.descriptor}</p>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-foreground">{siteConfig.tagline}</p>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-white">{siteConfig.tagline}</p>
           </div>
           <div className="grid gap-10 sm:grid-cols-3">
             {footerNavigation.map((group) => (
@@ -32,7 +36,7 @@ export function SiteFooter() {
                 <ul className="mt-4 space-y-2.5">
                   {group.items.map((item) => (
                     <li key={item.href}>
-                      <Link href={item.href} className="text-sm text-foreground/90 hover:text-foreground">
+                      <Link href={item.href} className="text-sm text-white/80 hover:text-[#d8ff55]">
                         {item.label}
                       </Link>
                     </li>
@@ -47,21 +51,21 @@ export function SiteFooter() {
           <div className="space-y-2 text-sm text-muted">
             {hasContactEmail ? (
               <p>
-                <a className="hover:text-foreground" href={mailtoHref(siteConfig.contact.email)}>
+                  <a className="hover:text-white" href={mailtoHref(siteConfig.contact.email)}>
                   {siteConfig.contact.email}
                 </a>
               </p>
             ) : null}
             {hasContactPhone ? (
               <p>
-                <a className="hover:text-foreground" href={telHref(siteConfig.contact.phone)}>
+                  <a className="hover:text-white" href={telHref(siteConfig.contact.phone)}>
                   {siteConfig.contact.phone}
                 </a>
               </p>
             ) : null}
             {hasWhatsapp ? (
               <p>
-                <a className="hover:text-foreground" href={whatsappHref(siteConfig.contact.whatsapp)}>
+                  <a className="hover:text-white" href={whatsappHref(siteConfig.contact.whatsapp)}>
                   WhatsApp
                 </a>
               </p>
@@ -72,7 +76,7 @@ export function SiteFooter() {
             <ul className="flex flex-wrap gap-4 text-sm">
               {socialLinks.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="text-muted hover:text-foreground" rel="noreferrer" target="_blank">
+                  <a href={item.href} className="text-muted hover:text-white" rel="noreferrer" target="_blank">
                     {item.label}
                   </a>
                 </li>

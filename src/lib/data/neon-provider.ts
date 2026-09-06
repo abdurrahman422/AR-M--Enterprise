@@ -184,7 +184,7 @@ async function persistProject(
   return writeRow("projects", mapProject, projectSchema, projectToRow(project), current ? "update" : "insert", current?.id);
 }
 
-async function persistSupabaseInquiry(input: InquiryCreateInput): Promise<PersistenceResult<Inquiry>> {
+async function persistNeonInquiry(input: InquiryCreateInput): Promise<PersistenceResult<Inquiry>> {
   if (!isNeonConfigured()) return notConfiguredResult("Inquiries");
   const timestamp = nowIso();
   const inquiry: Inquiry = {
@@ -334,10 +334,10 @@ export const neonProvider: DataProvider = {
     remove: (id) => deleteRow("team_members", id),
   },
   inquiries: {
-    createQuote: async (input) => persistSupabaseInquiry({ ...input, kind: "quote" }),
-    createConsultation: async (input) => persistSupabaseInquiry({ ...input, kind: "consultation" }),
-    createService: async (input) => persistSupabaseInquiry({ ...input, kind: "service" }),
-    createIdentify: async (input) => persistSupabaseInquiry({ ...input, kind: "identify" }),
+    createQuote: async (input) => persistNeonInquiry({ ...input, kind: "quote" }),
+    createConsultation: async (input) => persistNeonInquiry({ ...input, kind: "consultation" }),
+    createService: async (input) => persistNeonInquiry({ ...input, kind: "service" }),
+    createIdentify: async (input) => persistNeonInquiry({ ...input, kind: "identify" }),
     list: async (kind) => {
       const client = requireClient();
       let query = client.from("inquiries").select("*").order("created_at", { ascending: false });

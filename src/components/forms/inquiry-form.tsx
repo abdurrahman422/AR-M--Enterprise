@@ -14,14 +14,13 @@ import type { InquiryKind } from "@/types/inquiries";
 
 type InquiryFormKind = Exclude<InquiryKind, "identify">;
 
-const copy: Record<InquiryFormKind, { submit: string; extra: { name: string; label: string; placeholder: string }[]; allowFile: boolean }> = {
+const copy: Record<InquiryFormKind, { submit: string; extra: { name: string; label: string; placeholder: string }[] }> = {
   quote: {
     submit: "Request a quote",
     extra: [
       { name: "productTitle", label: "Product or equipment", placeholder: "If known" },
       { name: "quantity", label: "Quantity / capacity", placeholder: "Optional" },
     ],
-    allowFile: true,
   },
   consultation: {
     submit: "Send request",
@@ -29,7 +28,6 @@ const copy: Record<InquiryFormKind, { submit: string; extra: { name: string; lab
       { name: "topic", label: "Topic", placeholder: "Process, layout, equipment, or performance" },
       { name: "preferredTiming", label: "Preferred timing", placeholder: "Optional" },
     ],
-    allowFile: true,
   },
   service: {
     submit: "Request service",
@@ -37,7 +35,6 @@ const copy: Record<InquiryFormKind, { submit: string; extra: { name: string; lab
       { name: "serviceType", label: "Service type", placeholder: "Installation, audit, spare support, or other" },
       { name: "millLocation", label: "Mill location", placeholder: "Optional" },
     ],
-    allowFile: true,
   },
 };
 
@@ -62,7 +59,7 @@ export function InquiryForm({
   const fields = copy[kind];
 
   return (
-    <form action={action} className="max-w-xl space-y-5" encType="multipart/form-data">
+    <form action={action} className="max-w-xl space-y-5">
       <input type="hidden" name="kind" value={kind} />
       {defaultProductSlug ? <input type="hidden" name="productSlug" value={defaultProductSlug} /> : null}
       <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
@@ -131,13 +128,6 @@ export function InquiryForm({
           placeholder="What needs to be quoted, reviewed, or supported?"
         />
       </div>
-      {fields.allowFile ? (
-        <div>
-          <Label htmlFor={`${kind}-file`}>Attachment</Label>
-          <Input id={`${kind}-file`} name="photo" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="mt-2" />
-          <p className="mt-1.5 text-xs text-muted">Optional. JPG, PNG, WebP, or PDF. 8MB maximum.</p>
-        </div>
-      ) : null}
       <div>
         <Label htmlFor={`${kind}-message`}>Message</Label>
         <Textarea

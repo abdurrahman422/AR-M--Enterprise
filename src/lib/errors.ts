@@ -2,7 +2,7 @@ export class PersistenceNotConfiguredError extends Error {
   readonly code = "NOT_CONFIGURED" as const;
 
   constructor(
-    message = "A PostgreSQL/Supabase store is not connected, so this request cannot be saved yet.",
+    message = "The PostgreSQL database is not connected, so this request cannot be saved yet.",
   ) {
     super(message);
     this.name = "PersistenceNotConfiguredError";

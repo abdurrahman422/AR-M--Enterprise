@@ -39,23 +39,24 @@ export default async function ServiceDetailPage({ params }: Props) {
   const related = relatedPages(service, catalog);
 
   return (
-    <Container className="space-y-16 py-12 sm:py-16">
-      <header className="max-w-3xl">
-        <p className="text-xs uppercase tracking-[0.22em] text-accent">Service</p>
-        <h1 className="mt-4 font-heading text-4xl leading-tight tracking-tight sm:text-5xl">{service.title}</h1>
-        {service.summary ? <p className="mt-5 text-lg leading-8 text-muted">{service.summary}</p> : null}
-        <div className="mt-8">
+    <>
+      <header className="relative overflow-hidden bg-foreground text-white"><div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/20 blur-3xl" /><Container className="relative py-16 sm:py-24">
+        <p className="section-label text-accent-soft">Service capability</p>
+        <h1 className="mt-6 max-w-4xl font-heading text-5xl font-semibold leading-[.95] tracking-[-.05em] sm:text-7xl">{service.title}</h1>
+        {service.summary ? <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">{service.summary}</p> : null}
+        <div className="mt-9">
           <ServiceCta serviceTitle={service.title} />
         </div>
-      </header>
+      </Container></header>
+    <Container className="space-y-16 py-16 sm:py-24">
       {service.description ? (
-        <section>
-          <h2 className="font-heading text-2xl">Scope</h2>
-          <div className="mt-5 max-w-3xl whitespace-pre-wrap text-base leading-8 text-muted">{service.description}</div>
+        <section className="grid gap-8 lg:grid-cols-[.45fr_1fr]">
+          <div><p className="section-label">Scope overview</p><h2 className="mt-4 font-heading text-3xl font-semibold tracking-tight">What this engagement covers</h2></div>
+          <div className="rounded-3xl border border-border bg-white p-7 whitespace-pre-wrap text-base leading-8 text-muted shadow-sm sm:p-10">{service.description}</div>
         </section>
       ) : null}
-      <section className="border border-border bg-surface p-6 sm:p-8">
-        <h2 className="font-heading text-xl">Discuss this service</h2>
+      <section className="rounded-3xl bg-[#e9eef3] p-7 sm:p-10">
+        <h2 className="font-heading text-2xl font-semibold">Discuss this service with an engineer</h2>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
           Work is scoped against the mill, equipment, and site conditions. Commercial terms are issued on request.
         </p>
@@ -74,5 +75,6 @@ export default async function ServiceDetailPage({ params }: Props) {
         </section>
       ) : null}
     </Container>
+    </>
   );
 }

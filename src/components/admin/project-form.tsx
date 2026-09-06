@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { uploadCatalogMedia } from "@/app/admin/catalog-actions";
 import { ConfirmDelete } from "@/components/admin/confirm-delete";
 import { DriverNote } from "@/components/admin/driver-note";
 import { FieldError } from "@/components/forms/field-error";
@@ -34,7 +33,6 @@ export function ProjectForm({
   const [slug, setSlug] = useState(project?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(Boolean(project?.slug));
   const [images, setImages] = useState<MediaAsset[]>(project?.images ?? []);
-  const [uploadMessage, setUploadMessage] = useState<string>();
 
   return (
     <form action={formAction} className="max-w-3xl space-y-6">
@@ -174,30 +172,7 @@ export function ProjectForm({
                   }
                 />
               </div>
-              <div className="flex items-end gap-2">
-                <label className="text-xs text-muted">
-                  Upload
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="mt-2 block w-full text-xs"
-                    onChange={async (event) => {
-                      const file = event.target.files?.[0];
-                      event.target.value = "";
-                      if (!file) return;
-                      const payload = new FormData();
-                      payload.set("file", file);
-                      payload.set("folder", "projects");
-                      const result = await uploadCatalogMedia(payload);
-                      if (result.ok) {
-                        setImages((current) => current.map((item) => (item.id === image.id ? { ...item, url: result.url } : item)));
-                        setUploadMessage("Image stored.");
-                      } else {
-                        setUploadMessage(result.message);
-                      }
-                    }}
-                  />
-                </label>
+              <div className="flex items-end">
                 <Button
                   type="button"
                   variant="ghost"
@@ -229,7 +204,6 @@ export function ProjectForm({
         <input type="checkbox" name="featured" value="true" defaultChecked={project?.featured} className="h-4 w-4 accent-accent" />
         Featured
       </label>
-      {uploadMessage ? <StatusMessage tone="neutral">{uploadMessage}</StatusMessage> : null}
       {state.message ? (
         <StatusMessage tone={state.status === "error" ? "danger" : state.status === "success" ? "success" : "neutral"}>
           {state.message}

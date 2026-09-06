@@ -29,8 +29,8 @@ export default async function SolutionsPage({
     <>
       <PageHeader
         eyebrow="Applications"
-        title="Solutions"
-        description="Process-focused applications for feed mill and industrial plants. Published only when a solution record is available — no invented case claims."
+        title="Solve the constraint, not just the symptom."
+        description="Integrated paths for new mills, expansion, automation, performance improvement, spare support, and operational recovery."
         actions={<QuoteCta compact />}
       />
       <Container className="space-y-10 py-12 sm:py-16">
@@ -42,8 +42,8 @@ export default async function SolutionsPage({
         </form>
         {!q && featured.length > 0 ? (
           <section>
-            <h2 className="font-heading text-2xl tracking-tight">Featured</h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <h2 className="font-heading text-3xl font-semibold tracking-[-.04em]">High-impact interventions</h2>
+            <div className="mt-6 grid md:grid-cols-2">
               {featured.map((solution) => (
                 <EntryCard
                   key={solution.id}
@@ -74,7 +74,7 @@ export default async function SolutionsPage({
             }
           />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid md:grid-cols-2">
             {solutions.map((solution) => (
               <EntryCard
                 key={solution.id}

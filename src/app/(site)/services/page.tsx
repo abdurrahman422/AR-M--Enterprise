@@ -29,8 +29,8 @@ export default async function ServicesPage({
     <>
       <PageHeader
         eyebrow="Capabilities"
-        title="Services"
-        description="Engineering and mill-support services. Scope and commercial terms are set through a consultation or service request — not as a public price list."
+        title="Support from concept to continuous operation."
+        description="Engineering, installation, commissioning, maintenance, troubleshooting, automation, utilities, and technical consultancy—coordinated around your mill."
         actions={<ServiceCta compact />}
       />
       <Container className="space-y-10 py-12 sm:py-16">
@@ -42,8 +42,8 @@ export default async function ServicesPage({
         </form>
         {!q && featured.length > 0 ? (
           <section>
-            <h2 className="font-heading text-2xl tracking-tight">Featured</h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <h2 className="font-heading text-3xl font-semibold tracking-[-.04em]">Where owners usually call us first</h2>
+            <div className="mt-6 grid md:grid-cols-2">
               {featured.map((service, index) => (
                 <EntryCard
                   key={service.id}
@@ -78,7 +78,7 @@ export default async function ServicesPage({
               <h2 className="font-heading text-2xl tracking-tight">{q ? "Results" : "All services"}</h2>
               <p className="font-mono text-xs text-muted">{services.length} listed</p>
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid md:grid-cols-2">
               {services.map((service, index) => (
                 <EntryCard
                   key={service.id}

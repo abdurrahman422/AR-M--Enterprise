@@ -30,11 +30,11 @@ export function CollectionPage({
   return (
     <>
       <PageHeader eyebrow={eyebrow} title={title} description={description} actions={<QuoteCta compact />} />
-      <Container className="py-14 sm:py-16">
+      <Container className="py-16 sm:py-24">
         {items.length === 0 ? (
           <EmptyState title={emptyTitle} description={emptyDescription} />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <Card
                 key={item.slug}

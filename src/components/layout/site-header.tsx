@@ -13,15 +13,15 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background">
-      <Container className="flex h-16 items-center justify-between gap-6">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-white/90 shadow-[0_4px_24px_rgba(9,35,62,.04)] backdrop-blur-xl">
+      <Container className="flex h-[82px] items-center justify-between gap-6">
         <SiteMark />
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
           {primaryNavigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm text-muted transition-colors hover:text-foreground"
+              className="relative py-2 text-[12px] font-semibold uppercase tracking-[0.09em] text-foreground/65 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:origin-left after:scale-x-0 after:bg-accent after:transition-transform hover:text-foreground hover:after:scale-x-100"
             >
               {item.label}
             </Link>
@@ -34,7 +34,7 @@ export function SiteHeader() {
         </div>
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center border border-border text-foreground lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/30 text-foreground lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-navigation"
           onClick={() => setOpen((value) => !value)}
@@ -48,7 +48,7 @@ export function SiteHeader() {
         </button>
       </Container>
       {open ? (
-        <div id="mobile-navigation" className="border-t border-border bg-background lg:hidden">
+        <div id="mobile-navigation" className="border-t border-foreground/15 bg-background lg:hidden">
           <Container className="flex flex-col gap-4 py-5">
             <nav aria-label="Mobile">
               <ul className="flex flex-col gap-3">

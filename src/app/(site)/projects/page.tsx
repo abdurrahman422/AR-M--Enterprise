@@ -29,8 +29,8 @@ export default async function ProjectsPage({
     <>
       <PageHeader
         eyebrow="Work"
-        title="Projects"
-        description="Case studies are published only when verified project details are available. Client names and performance numbers are not invented."
+        title="Engineering work, documented clearly."
+        description="Selected project scopes and delivery stories will appear here as verified records become available."
         actions={<QuoteCta compact />}
       />
       <Container className="space-y-10 py-12 sm:py-16">
@@ -42,8 +42,8 @@ export default async function ProjectsPage({
         </form>
         {!q && featured.length > 0 ? (
           <section>
-            <h2 className="font-heading text-2xl tracking-tight">Featured</h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <h2 className="font-heading text-3xl font-semibold tracking-[-.04em]">Selected delivery stories</h2>
+            <div className="mt-6 grid md:grid-cols-2">
               {featured.map((project) => {
                 const image = [...project.images].sort((a, b) => a.sortOrder - b.sortOrder)[0];
                 return (
@@ -77,7 +77,7 @@ export default async function ProjectsPage({
             }
           />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid md:grid-cols-2">
             {projects.map((project) => {
               const image = [...project.images].sort((a, b) => a.sortOrder - b.sortOrder)[0];
               return (
